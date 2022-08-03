@@ -123,7 +123,8 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
     DWORD   LoaderFlags;
     DWORD   NumberOfRvaAndSizes;
     IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;```
+} IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;
+```
 
 Elle est globalement divisée en deux parties. Les 8 premières entrées sont caractéristiques du format COFF (Common Object File Format) duquel dérive le format PE. Les autres 
 sont des extensions utilisées par le loader et linker (durant le processus de compilation) sous Windows.
