@@ -32,19 +32,19 @@ typedef struct _IMAGE_DOS_HEADER {      // DOS .EXE header
   } IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;
   ```
   
-Il n'existe en général que deux entrée pertinentes dans cette structure : le WORD "e_magic" et le LONG"e_lfanew".L'on peut observer en regardant le premier que les deux premiers octets de cette structure, et donc les deux premiers octets de tout fichier PE sont 4D et 5A, formant ainsi 'MZ' en ASCII,.
-Pour la petite histoire ceux-ci correspondent aux initiales de Mark Zbikowski, l'un des lead developers de MS-DOS (mentionné plus haut).
+Il n'existe en général que deux entrées pertinentes dans cette structure : le WORD "e_magic" et le LONG "e_lfanew". 
 
-Le second est un pointeur vers l'en-tête PE (que nous allons voir bientôt).
+L'on peut observer en regardant le premier que les deux premiers octets de cette structure, et donc les deux premiers octets de tout fichier PE sont 4D et 5A, formant ainsi 'MZ' en ASCII. Pour la petite histoire ceux-ci correspondent aux initiales de Mark Zbikowski, l'un des lead developers de MS-DOS (mentionné plus haut).
+
+Le second est simplement un pointeur vers l'en-tête PE (que nous allons voir bientôt).
  
- ### Le segment DOS
+### Le segment DOS
  
  Un segment "bonus" logé entre les deux premiers en-têtes et considéré comme faisant partie du premier, le segment DOS est exécuté uniquement si le fichier n'a pu être reconnu comme un exécutable valide, ou si il est exécuté sous MS-DOS, et affiche le message "Ce programme ne peut pas être exécuté en mode DOS"
  
- ## L'en-tête PE
+## L'en-tête PE
  
  L'en-tête PE est composé d'une signature et de deux structures, toutes les trois regroupées au sein de la structure _IMAGE_NT_HEADERS.
- 
  ```cpp
  typedef struct _IMAGE_NT_HEADERS {
     DWORD Signature;
@@ -71,10 +71,11 @@ typedef struct _IMAGE_FILE_HEADER {
 } IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;
 ```
 
-Le WORD "Machine" indique l'architecture du processeur visée par notre exécutable. Les valeurs les plus communes sont donc 0x8864 (x64) et 0x14c (Intel 386 et affiliés) ; d'autres valeurs
-peuvent également y figurer, comme 0x0 pour des architectures inconnues, mais je ne m'y attarderai pas. Le WORD "NumberOfSections" indique la taille de notre table de sections, située immédiatement après nos en-têtes.Le WORD "SizeOfOptionalHeader" indique la taille de l'en-tête Optionel (optionel dans le sens où certain types d'objets ne l'ont pas )
+*   Le WORD "Machine" indique l'architecture du processeur visée par notre exécutable. Les valeurs les plus communes sont donc 0x8864 (x64) et 0x14c (Intel 386 et affiliés) ; d'autres valeurs peuvent également y figurer, comme 0x0 pour des architectures inconnues, mais je ne m'y attarderai pas. 
+*   Le WORD "NumberOfSections" indique la taille de notre table de sections, située immédiatement après nos en-têtes.
+*   Le WORD "SizeOfOptionalHeader" indique la taille de l'en-tête Optionel (optionel dans le sens où certain types d'objets ne l'ont pas )
 
-Et pour finir, le WORD Characteristics indique l'attribut associé au fichier ; par exemple 0x102 pour indiquer que le fichier est une exécutable 32 bits, ou 0x2000 pour indiquer que c'est une DLL
+Et pour finir, le WORD "Characteristics" indique l'attribut associé au fichier ; par exemple 0x102 pour indiquer que le fichier est une exécutable 32 bits, ou 0x2000 pour indiquer que c'est une DLL
 
 
 ### IMAGE_OPTIONAL_HEADER32
@@ -145,10 +146,9 @@ Dans la seconde partie, les entrées notables sont
 
 Je vais m'attarder également sur les deux dernières entrées de cette structure, le DWORD "NumberOfRvaAndSizes", indiquant selon la documentation le nombre de répertoire de données ("Data Directories" en anglais), et le tableau de structures "IMAGE_DATA_DIRECTORY". Mais que sont donc ces "répertoire de données" ?
 
-Ce terme se réfère à des répertoires situés dans les sections de notre fichier PE, et contenant des données utiles pour le loader Windows. Un exemple concret serait l'Import Directory (répertoire des imports), qui contient une liste de toutes
-les fonctions importées d'autres librairies par notre exécutable (kernel32.dll et ntdll.dll pour citer les plus évidentes)
+Ce terme se réfère à des répertoires situés dans les sections de notre fichier PE, et contenant des données utiles pour le loader Windows. Un exemple concret serait l'Import Directory (répertoire des imports), situés dans la section .idata (nous y reviendrons plus tard).
 
-Le tableau "IMAGE_DATA_DIRECTORY" est défini comme ceci :
+De retour à notre en-tête NT, le tableau "IMAGE_DATA_DIRECTORY" est défini comme ceci :
 
 ```cpp
 IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES]
@@ -173,3 +173,70 @@ typedef struct _IMAGE_DATA_DIRECTORY {
 Le DWORD "VirtualAddress" est une adresse de type RVA pointant vers le début d'un répertoire de données, et le DWORD "Size" indique évidemment la taille dudit répertoire.
 
 >RVA correspond à "Relative Virtuelle Adress" en anglais, appellée ainsi car relative à l'adresse spécifiée dans "ImageBase", vu plus haut dans le même en-tête).
+
+Il existe plusieurs types de répertoires de données, définis, vous l'aurez devinés, dans winnt.h :
+
+```cpp
+#define IMAGE_DIRECTORY_ENTRY_EXPORT          0   // Export Directory
+#define IMAGE_DIRECTORY_ENTRY_IMPORT          1   // Import Directory
+#define IMAGE_DIRECTORY_ENTRY_RESOURCE        2   // Resource Directory
+#define IMAGE_DIRECTORY_ENTRY_EXCEPTION       3   // Exception Directory
+#define IMAGE_DIRECTORY_ENTRY_SECURITY        4   // Security Directory
+#define IMAGE_DIRECTORY_ENTRY_BASERELOC       5   // Base Relocation Table
+#define IMAGE_DIRECTORY_ENTRY_DEBUG           6   // Debug Directory
+//      IMAGE_DIRECTORY_ENTRY_COPYRIGHT       7   // (X86 usage)
+#define IMAGE_DIRECTORY_ENTRY_ARCHITECTURE    7   // Architecture Specific Data
+#define IMAGE_DIRECTORY_ENTRY_GLOBALPTR       8   // RVA of GP
+#define IMAGE_DIRECTORY_ENTRY_TLS             9   // TLS Directory
+#define IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG    10   // Load Configuration Directory
+#define IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT   11   // Bound Import Directory in headers
+#define IMAGE_DIRECTORY_ENTRY_IAT            12   // Import Address Table
+#define IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT   13   // Delay Load Import Descriptors
+#define IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR 14   // COM Runtime descriptor
+```
+
+## Les en-têtes de sections
+
+Les dernier en-têtes, juste après l'en-tête optionel, sont les en-têtes de sections. Avant de s'y intéresser, définir ce qu'est une section est nécessaire.
+
+Les sections, situées après tout nos headers et constituant la seconde partie de notre fichier PE, sont des containers pour du code ou des données dans un fichier PE/COFF, similaires aux segments dans l'architecture Intel8086. Les quatre sections les plus communes dans les fichiers PE sont ;
+
+*   La section .text : qui contient le code de notre exécutable.
+*   La section .data : contient les "données initialisées", comme des variables globales.
+*   La section .rsrc : contient des ressources utilisées par l'exécutable (favicons, autres exécutables).
+*   La section .idata: contient les repertoire des données liés aux imports de fonctions de notre exécutable
+
+Il en existe bien d'autres (.bss, .rdata, .tls), détaillées dans la documentation officielle Microsoft (https://docs.microsoft.com/fr-fr/windows/win32/debug/pe-format#optional-header-data-directories-image-only). Nous y reviendrons plus en détail prochainement.
+
+
+De retour à nos en-têtes de sections. Ceux-ci sont définis comme-ci ; 
+
+```cpp
+typedef struct _IMAGE_SECTION_HEADER {
+  BYTE  Name[IMAGE_SIZEOF_SHORT_NAME];
+  union {
+      DWORD PhysicalAddress;
+      DWORD VirtualSize;
+  } Misc;
+  DWORD VirtualAddress;
+  DWORD SizeOfRawData;
+  DWORD PointerToRawData;
+  DWORD PointerToRelocations;
+  DWORD PointerToLinenumbers;
+  WORD  NumberOfRelocations;
+  WORD  NumberOfLinenumbers;
+  DWORD Characteristics;
+} IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;
+```
+
+*   Le DWORD name est plutôt explicite, et indique le nom de la section (limité à 8 caractères). Exemple : ".$tls"
+*   Les DWORDs PhysicalAddress et VirtualSize, deux mêmes noms pour une seule notion ; la taille de notre section une fois chargée en mémoire.
+*   Le DWORD VirtualAddress est un pointeur vers le début de notre section relative à la base de l'image.
+*   Le DWORD SizeOfRawData correspond à la taille de la section sur disque (doit être un multiple de FileAlignement, vu plus-haut dans l'en-tête optionel)
+*   Le DWORD PointerToRelocations est un pointeur vers les relocalisations (que nous verrons plus tard)
+*   Le DWORD Characteristics est une valeur indiquant les caractéristiques de la section tel que définies par la documentation Microsoft (https://docs.microsoft.com/fr-fr/windows/win32/debug/pe-format#section-flags). Par exemple, 0x00000020 indique que la sectio contient du code exécutable, comme la section .code.
+
+
+
+
+Et c'est tout pour aujourd'hui ! Dans le prochain post, nous examinerons les principales sections du format de fichier PE : code, imports, data.
