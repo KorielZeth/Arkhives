@@ -53,7 +53,7 @@ Le second est simplement un pointeur vers l'en-tête PE (que nous allons voir bi
 } IMAGE_NT_HEADERS32, *PIMAGE_NT_HEADERS32;
 ```
 
-Le DWORD "Signature" doit être égal à 0x00004550, dont l'équivalent en ASCII est "PE\0\0" (les nullbytes \0 arrivant les premiers, endianness oblige.
+Pour commencer, le DWORD "Signature" doit être égal à 0x00004550, dont l'équivalent en ASCII est "PE\0\0" (les nullbytes \0 arrivant les premiers, endianness oblige.
 
 ### IMAGE_FILE_HEADER
 
