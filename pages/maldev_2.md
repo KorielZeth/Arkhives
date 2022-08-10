@@ -14,7 +14,9 @@ Le programme suit une logique très simple, à commencer par l'inclusion dans le
 
 Jetons un oeil auxdites fonctions une par une :
 
-## VirtualAlloc
+## Les fonctions utilisées
+
+### VirtualAlloc
 
 Définie dans la documentation Microsoft comme ceci : 
 
@@ -34,7 +36,7 @@ Cette fonction sert à réserver un bloc mémoire, et prend quatre paramètres:
 *	flAllocationType, un DWORD désignant le type d'allocation mémoire. Par exemple, "MEM_RESERVE" (nom assez explicite) pour réserver un bloc mémoire dans le processus.
 *	flProtect, un DWORD servant à indiquer la protection mémoire assignée à notre bloc mémoire. Exemple : la protection mémoire "PAGE_EXECUTE_READ" sert de factio à y assigner les permissions "lecture" et "exécution".
 
-## RtlMoveMemory
+### RtlMoveMemory
 
 Définie dans la documentation Microsoft comme ceci : 
 
@@ -52,7 +54,7 @@ Cette fonction sert à copier le contenu d'un bloc mémoire vers un autre, et pr
 *	\*Source, un pointeur vers le bloc mémoire source en provenance duquel seront copiés nos octets/bytes
 *	Length, un integer désignant le nombre d'octets/bytes à copier de la source à la destination
 
-## VirtualProtect
+### VirtualProtect
 
 Définie dans la documentation Microsoft comme ceci :
 
@@ -97,8 +99,58 @@ Cette fonction sert à créer un thread d'exécution pour le processus actuel, e
 *	lpThreadId, un pointeur (optionel) vers une variable recevant l'ID du thread. Inutile dans notre cas
 
 
+## Le code
+
+Ces quatre fonctions définies, place au code en lui même. 
+
+> Pour ce qui touche aux chaînes de caractères, je n'utiliserai en général que les types que ceux conçus pour l'UTF16-LE, le type de caractères natif sur les systèmes d'exploitation Windows ; devoir caler des casts et des "L" à droite à gauche dans la moitié de mes programmes m'a un peu fatigué.
 
 
-Ces quatre fonctions définies, place au code en lui même.
+```cpp
+#include <stdio.h>
+#include <windows.h>
 
-[placeholder du code]
+
+
+int main() {
+
+	wchar_t payload[] = {0x90,0x90,0x90,0x90};
+	unsigned int payloadlen = sizeof(payload);
+
+	void* buffer;
+	HANDLE hThread;
+	DWORD exProtection = 0;
+	bool retValue;
+
+	buffer = VirtualAlloc(0,payloadlen,MEM_RESERVE | MEM_COMMIT,PAGE_READWRITE);
+	RtlMoveMemory(buffer,payload,payloadlen);
+	retValue =VirtualProtect(buffer, payloadlen, PAGE_EXECUTE_READ, &exProtection);
+
+	if (retValue != 0) {
+
+		hThread = CreateThread(0,0,(LPTHREAD_START_ROUTINE)buffer,0,0,0);
+		WaitForSingleObject(hThread, 500);
+
+
+	}
+
+	return 0;
+}
+```
+
+Le lecteur notera qu'avant l'exécution du quatuor de fonctions susmentionnées, je déclare certaines variables particulières.
+
+*	_payload_, un array de bytes (nullbytes dans notre cas), et l'integer _payloadlen_, sa taille exprimée par le biais de la fonction _sizeof()_
+*	_buffer_, un pointeur (vide lors de sa déclaration) vers le futur espace mémoire qui accueillera notre payload
+*	_hThread_, une handle qui pointera vers l'object de type Thread retourné par la fonction _CreateThread()_
+*	_exProtection_, un DWORD à la valeur de 0 qui nous servira plus tard
+*	_retValue_, un booléen qui prendra la valeur de retour de la fonction _VirtualProtect()_
+
+Et j'exécute enfin nos quatre fonctions :
+
+### VirtualAlloc
+
+```cpp
+buffer = VirtualAlloc(0,payloadlen,MEM_RESERVE | MEM_COMMIT,PAGE_READWRITE);
+```
+

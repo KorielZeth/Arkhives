@@ -8,4 +8,4 @@ Celui-ci est composé de deux parties principales ; les en-têtes ("headers" en 
 
 Je traiterai dans la prochaine partie des en-têtes, avant de couvrir ensuite les différentes sections, et enfin le processus de loading.
 
-Ce post est sponsorisé (pas littéralement) par la documentation Microsoft (https://docs.microsoft.com/fr-fr/), et l'inspiration principale de ce post reste le blog de "0xrick" (https://0xrick.github.io/).
+Ce post est sponsorisé (pas littéralement) par la documentation Microsoft (https://docs.microsoft.com/fr-fr/), et l'inspiration principale de ce post reste le blog de "0xrick" (https://0xrick.github.io/), suppléé par cet article de Satyajit Daulaguphu (https://tech-zealots.com/malware-analysis/journey-towards-import-address-table-of-an-executable-file/) et, tout bêtement, Wikipédia.

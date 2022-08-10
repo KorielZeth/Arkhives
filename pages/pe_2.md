@@ -30,7 +30,7 @@ typedef struct _IMAGE_DOS_HEADER {      // DOS .EXE header
     WORD   e_res2[10];                  // Reserved words
     LONG   e_lfanew;                    // File address of new exe header
   } IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;
-  ```
+```
   
 Il n'existe en général que deux entrées pertinentes dans cette structure : le WORD "e_magic" et le LONG "e_lfanew". 
 
