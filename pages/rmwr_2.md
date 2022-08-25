@@ -1,10 +1,12 @@
-# Le service d'encryption
+# Le service de chiffrement
 
-Le coeur de notre ransomware PoC reste son service d'encryption. Pour cet aspect, Microsoft met à notre disposition la librairie wincrypt, inclue dans le set API Windows (https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-cryptacquirecontexta). Celle-ci sera supposément bientôt dépréciée, et remplacée par le standard CNG (https://docs.microsoft.com/en-us/windows/win32/seccng/cng-portal et https://docs.microsoft.com/fr-fr/windows/win32/seccng/encrypting-data-with-cng), mais en attendant, nous nous en contenterons.
+Le coeur de notre ransomware PoC reste son service de chiffrement. Pour cet aspect, Microsoft met à notre disposition la librairie wincrypt, inclue dans le set API Windows (https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-cryptacquirecontexta). Celle-ci sera supposément bientôt dépréciée, et remplacée par le standard CNG (https://docs.microsoft.com/en-us/windows/win32/seccng/cng-portal et https://docs.microsoft.com/fr-fr/windows/win32/seccng/encrypting-data-with-cng), mais en attendant, nous nous en contenterons. 
+
+>Afin de complaire à nos grands amis de l'OQLF, de l'ANSSI, et de l'Académie Française, l'auteur utilisera le terme "chiffrer" au lieu d'encrypter.
 
 ## La gestion cryptographique avec l'API Windows ; théorie
 
-Le trio de fonctions le plus importantes restent :
+Pour tout ce qui touche à la génération d'une clé et à la logique de chiffrement, le trio de fonctions le plus utiles dans l'API Windows restent :
 
 ### CryptAcquireContextA
 
@@ -49,7 +51,7 @@ BOOL CryptExportKey(
 );
 ```
 
-La structure en question. Pour une clé AES-192, notre blob fera donc un total de 36 bytes
+La structure en question. Pour une clé AES-192, notre blob fera donc par exemple un total de 36 bytes
 
 ```cpp
 typedef struct _PLAINTEXTKEYBLOB {
@@ -153,6 +155,8 @@ BOOL CryptImportKey(
 );
 ```
 
-## L'encryption des fichiers avec une clé : théorie
+## Le chiffrement des fichiers avec une clé : théorie
 
-L'idée reste simple, en utilisant la fonction ReadFile, qui ouvre une handle vers un fichier spécifique (en le créant au passage si il n'existe pas et que le paramètre approprié est précisé)
+L'idée reste simple. 
+
+//Tout d'abord, déclarer deux handles

@@ -154,3 +154,45 @@ Et j'exécute enfin nos quatre fonctions :
 buffer = VirtualAlloc(0,payloadlen,MEM_RESERVE | MEM_COMMIT,PAGE_READWRITE);
 ```
 
+Rien de suprenant, on réserve notre espace en mémoire (MEM_RESERVE & MEM_COMMIT), en y assignant la permission READWRITE. Mais si cet espace est censé contenir un payload ayant pour but d'être exécuté, ne serait-il pas plus pertinent d'y assigner les permissions d'exécution directement ? La réponse est non, vu que nimporte quel anti-virus/sandbox digne de ce nom détectera la création d'un espace mémoire RWX et se mettra à sonner l'alarme instantanément. Assigner des permissions d'écriture pour copier notre shellcode dans l'espace réservé, PUIS changer la permission de RW à RX est bien plus discret.
+
+### RtlMoveMemory
+
+```cpp
+RtlMoveMemory(buffer,payload,payloadlen);
+```
+
+Assez simple. On prend le payload, et on le déplace dans le buffer setup lors de l'appel à VirtualAlloc ci-dessus
+
+### VirtualProtect
+
+```cpp
+retValue =VirtualProtect(buffer, payloadlen, PAGE_EXECUTE_READ, &exProtection);
+```
+
+Comme expliqué plus haut, VirtualProtect va se charger de modifier les permissions de l'espace mémoire réservé plus haut (cf le troisième argument prenant la valeur PAGE_EXECUTE_READ). exProtection est juste là pour indiquer la protection précédente (zéro). Félicitations, buffer pointe désormais vers un espace mémoire RX dans lequel se situe notre payload, tout prêt a être exécuté !
+
+### CreateThread (et son partenaire, WaitForSingleObject)
+
+```cpp
+if (retValue != 0) {
+
+		hThread = CreateThread(0,0,(LPTHREAD_START_ROUTINE)buffer,0,0,0);
+		WaitForSingleObject(hThread, 500);
+
+
+	}
+```
+
+Si la valeur de retour de la fonction VirtualProtect, enregistrée dans le booléen retValue, est différente de zéro (indiquant ainsi son succès), alors nous utilisons la fonction CreateThread pour créer une HANDLE vers un thread se chargeant de l'exécution du shellcode contenu dans notre buffer. La fonction WaitForSingleObject se chargera de donner l'ordre d'exécution après 500 millisecondes.
+
+
+Et notre shellcode est ainsi exécuté (et dans notre cas, n'aura absolument aucun effet, vu qu'il est composé de quatre instructions NOPs)
+
+
+## La conclusion
+
+
+Pour conclure, cet exécutable ne comportant aucun méchanisme d'obfuscation, nimporte quelle solution de sécurité détectera directement dans sa table d'imports le (très suspicieux) quatuor de fonctions utilisées. Si j'avais inclus un shellcode digne de ce nom sans l'obfusquer, celui-ci aurait aussi été détecté directement.
+
+Rendez-vous dans le prochain post pour mettre en place les mécanismes d'obfuscation les plus basiques !
