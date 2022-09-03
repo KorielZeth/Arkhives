@@ -76,8 +76,8 @@ Cette ILT est un tableau de noms et références, communiquant à notre loader q
 Encore une table ? Ne vous inquiètez pas, celle-ci suit un format très simple :
 
 *   Un "Hint" ("indice"). Lors du chargement en mémoire de notre exécutable, le loader tente de faire correspondre ce hint à une fonction. En cas d'échec, une recherche est faite sur les entrées de la table d'exportation de la DLL ciblée.
-*   Un nom, sous la forme de chaîne ASCII contenant le nom de la fonction à importer, étant donc ascii-oblige null-terminated.
+*   Un nom, sous la forme de chaîne ASCII contenant le nom de la fonction à importer, étant donc, ascii-oblige, null-terminated.
 
 ### L'Import Address Table
 
-Cette table, sa structure, et son contenu, sont identiques à notre ILT/INT quand le fichier est encore sur disque. Lors du chargement en mémoire de l'exécutable et du processus de linking, le loader remplacera les entrées de l'IAT par les adresses 32/64 bits des fonctions importées.
+Cette table, sa structure, et son contenu, sont identiques à notre ILT/INT quand le fichier est encore sur disque. Cependant, lors du chargement en mémoire de l'exécutable et du processus de linking, le loader remplacera les entrées de l'IAT par les adresses 32/64 bits des fonctions importées.

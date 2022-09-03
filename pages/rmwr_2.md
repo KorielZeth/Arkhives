@@ -164,3 +164,5 @@ Tout d'abord, créer deux handles : la première pour le fichier source, et la d
 Après l'ouverture des deux handles, nous lisons une plage de bytes pré-déterminée depuis le fichier source, l'insérons dans un buffer, chiffrons ledit buffer, puis l'insérons dans le fichier de destination. L'opération est répétée jusqu'à ce que le fichier d'origine aie été intégralement chiffré. Simple, non ?
 
 Pour ce faire, nous allons utiliser un trio de fonctions spécifiques ;
+
+### 
