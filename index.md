@@ -30,4 +30,4 @@ layout: default
 
 [Introduction et avertissement préalable](./pages/rmwr_1.md)
 
-[Le service de chiffrement](.pages/rmwr_2.md)
+[Le service de chiffrement](./pages/rmwr_2.md)

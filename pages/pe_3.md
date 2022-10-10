@@ -81,3 +81,5 @@ Encore une table ? Ne vous inquiètez pas, celle-ci suit un format très simple 
 ### L'Import Address Table
 
 Cette table, sa structure, et son contenu, sont identiques à notre ILT/INT quand le fichier est encore sur disque. Cependant, lors du chargement en mémoire de l'exécutable et du processus de linking, le loader remplacera les entrées de l'IAT par les adresses 32/64 bits des fonctions importées.
+
+Et c'est tout pour aujourd'hui ! Dans le prochain post, nous examinerons la manière dont le loader charge notre fichier PE en mémoire, ce qui nous permettra de revenir au passage sur les sections abordées dans cet article. A bientôt !
