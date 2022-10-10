@@ -24,7 +24,7 @@ layout: default
 
 [Le maldev sous Windows : exécution d'un simple payload](./pages/maldev_2.md)
 
-[Le maldev sous Windows : obfuscation basique d'un simple payload](./pages/maldev_3.md)
+[Le maldev sous Windows : obfuscation basique d'un simple payload (en progrès)](./pages/maldev_3.md)
 
 ## Journal de développement d'une PoC de Ransomware en C++
 
