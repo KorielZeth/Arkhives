@@ -97,9 +97,38 @@ Où payloadlen et clélen correspondent à la longueur (via l'utilisation de siz
 
 Même logique que précédemment. On prend notre payload original, le chiffrons (ici avec l'algorithme AES) avant de créer une fonction se chargeant de le déchiffrer lors de l'exécution du programme.
 
-Voilà à quoi ressemble le programme se chargeant du chiffrement :
+Voilà à quoi ressemble le programme (toujours écrit par Renzo) se chargeant du chiffrement :
 
 ```python
+import sys
+from Crypto.Cipher import AES
+from os import urandom
+import hashlib
+
+KEY = urandom(16)
+
+def pad(s):
+	return s + (AES.block_size - len(s) % AES.block_size) * chr(AES.block_size - len(s) % AES.block_size)
+
+def aesenc(plaintext, key):
+
+	k = hashlib.sha256(key).digest()
+	iv = 16 * '\x00'
+	plaintext = pad(plaintext)
+	cipher = AES.new(k, AES.MODE_CBC, iv)
+
+	return cipher.encrypt(bytes(plaintext))
+
+
+try:
+    plaintext = open(sys.argv[1], "r").read()
+except:
+    print("File argument needed! %s <raw payload file>" % sys.argv[0])
+    sys.exit()
+
+ciphertext = aesenc(plaintext, KEY)
+print('AESkey[] = { 0x' + ', 0x'.join(hex(ord(x))[2:] for x in KEY) + ' };')
+print('payload[] = { 0x' + ', 0x'.join(hex(ord(x))[2:] for x in ciphertext) + ' };')
 ```
 
 
@@ -159,8 +188,33 @@ Les noms des fonctions sont somme toutes explicites : une handle est crée vers 
 
 Comme mentionné dans l'introduction de cet article, le premier indicateur de dangerosité d'un exécutable, analysé en premier par les divers solutions anti-virales, qu'elles soient inclues dans les systèmes d'exploitation, est la table des imports dudit exécutable.
 
-Prenons comme exemple l'exécutable généré dans la section précédente, et analysons sa table d'imports avec l'utilitaire PEBear :
+Prenons comme exemple l'exécutable généré dans la section précédente, et analysons sa table d'imports avec l'utilitaire PEBear. L'on y voit clairement l'import  des fonctions :
 
 
+ 
+ Il existe un moyen somme toute basique d'appeller ces fonctions dans notre programme sans que celles-ci apparaissent dans la table d'import. Pour ce faire, nous allons avoir recours au tandem de fonctions GetProcAddress et GetModuleHandle. Voyons comment ces dernières sont définies dans la MSDN.
 
- Il existe un moyen somme toute basique
+### GetModuleHandle
+
+La fonction GetModuleHandle se charge de nous retourner une handle vers le module que nous lui spécifions. Un module est un fichier PE (exe ou dll) qui compose un processus donné.
+
+```cpp
+HMODULE GetModuleHandleW(
+  [in, optional] LPCWSTR lpModuleName
+);
+```
+
+### GetProcAddress
+
+La fonction GetProcAddress se charge quand à elle de nous retourner l'adresse de la fonction spécifiée dans lpProcName, depuis la handle vers une DLL spécifiée par hModule (ladite handle ayant été obtenue précédemment par GetModuleHandle) 
+
+```cpp
+ FARPROC GetProcAddress(
+  [in] HMODULE hModule,
+  [in] LPCSTR  lpProcName
+);
+```
+
+### Théorie
+
+Vous l'aurez donc compris, le but de cette technique est de récupérer une handle vers une dll en particulier (disons kernel32.dll) via GetModuleHandle, puis d'utiliser GetProcAddress pour faire pointer l'adresse de la fonction que nous désirons utiliser (disons GetFileType) vers une fonction que nous nommerons de manière appropriée (disons bpGetFileType). Une fois bpGetFileType déclarée en tant que fonction dans notre programme avec les paramètres appropriés (se référer à la MSDN si nécéessaire), il nous suffira de l'appeller à chaque fois que nous voulons en réalité utiliser la fonction GetExitCodeProcess.
