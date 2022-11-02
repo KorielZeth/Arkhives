@@ -217,4 +217,7 @@ La fonction GetProcAddress se charge quand à elle de nous retourner l'adresse d
 
 ### Théorie
 
-Vous l'aurez donc compris, le but de cette technique est de récupérer une handle vers une dll en particulier (disons kernel32.dll) via GetModuleHandle, puis d'utiliser GetProcAddress pour faire pointer l'adresse de la fonction que nous désirons utiliser (disons GetFileType) vers une fonction que nous nommerons de manière appropriée (disons bpGetFileType). Une fois bpGetFileType déclarée en tant que fonction dans notre programme avec les paramètres appropriés (se référer à la MSDN si nécéessaire), il nous suffira de l'appeller à chaque fois que nous voulons en réalité utiliser la fonction GetExitCodeProcess.
+Vous l'aurez donc compris, le but de cette technique est de récupérer une handle vers une dll en particulier (disons kernel32.dll) via GetModuleHandle, puis d'utiliser GetProcAddress pour faire pointer l'adresse de la fonction que nous désirons utiliser (disons GetFileType) vers une fonction que nous nommerons de manière appropriée (disons bpGetFileType). Une fois bpGetFileType déclarée en tant que fonction dans notre programme avec les paramètres appropriés (se référer à la MSDN si nécéessaire), il nous suffira de l'appeller à chaque fois que nous voulons en réalité utiliser la fonction GetFileType.
+
+En pratique, voilà ce que cela donnerait dans notre code :
+
