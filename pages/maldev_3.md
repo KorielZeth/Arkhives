@@ -219,5 +219,29 @@ La fonction GetProcAddress se charge quand à elle de nous retourner l'adresse d
 
 Vous l'aurez donc compris, le but de cette technique est de récupérer une handle vers une dll en particulier (disons kernel32.dll) via GetModuleHandle, puis d'utiliser GetProcAddress pour faire pointer l'adresse de la fonction que nous désirons utiliser (disons GetFileType) vers une fonction que nous nommerons de manière appropriée (disons bpGetFileType). Une fois bpGetFileType déclarée en tant que fonction dans notre programme avec les paramètres appropriés (se référer à la MSDN si nécéessaire), il nous suffira de l'appeller à chaque fois que nous voulons en réalité utiliser la fonction GetFileType.
 
-En pratique, voilà ce que cela donnerait dans notre code :
+En pratique, voilà donc ce que cela donne dans notre code :
+
+```cpp
+
+// Les déclarations préalable de nos fonctions, conformément à la MSDN
+
+LPVOID (WINAPI* pVirtAll)(LPVOID lpAddress,SIZE_T dwSize,DWORD  flAllocationType,DWORD  flProtect);
+VOID (WINAPI* pRtlMM)(VOID UNALIGNED* Destination,const VOID UNALIGNED* Source,SIZE_T Length);
+BOOL (WINAPI* pVirtProt)(LPVOID lpAddress,SIZE_T dwSize,DWORD  flNewProtect,PDWORD lpflOldProtect);
+
+//Le pointage des adresses renvoyés par GetProcAddress à nos fonctions créés ci-dessus
+
+//pVirtAll= GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "VirtualAlloc");
+auto const pVirtAll = reinterpret_cast<LPVOID(WINAPI*)(LPVOID,SIZE_T,DWORD,DWORD)>(GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "VirtualAlloc"));
+
+//pRtlMM = GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "RtlMoveMemory");
+auto const pRtlMM = reinterpret_cast<VOID(WINAPI*)(VOID UNALIGNED*,const VOID UNALIGNED*,SIZE_T)>(GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "RtlMoveMemory"));
+
+//pVirtProt = GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "VirtualProtect");
+auto const pVirtProt = reinterpret_cast<BOOL(WINAPI*)(LPVOID,SIZE_T,DWORD,PDWORD)>(GetProcAddress(GetModuleHandle(L"Kernel32.dll"), "VirtualProtect"));
+```
+
+> Notes : le cours de S7 est basé sur des samples compilés avec MSVC à la barbare via un .bat. Si vous utilisez Visual Studio et tentez de réutiliser les samples tels quels (les lignes que j'ai commentées), le compilo et ses options par défaut vont vous hurler dessus. Vous pouvez soit désactiver la logique qui transforme les warnings en error et qui vous empêche de compiler, soit faire casts. J'ai inclus les deux pour l'exemple.
+
+
 
