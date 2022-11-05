@@ -164,7 +164,7 @@ Comme mentionné dans l'introduction de cet article, le premier indicateur de da
 
 Prenons comme exemple l'exécutable généré dans l'article, et analysons sa table d'imports avec l'utilitaire PEBear. L'on y voit clairement l'import des fonctions VirtualAlloc, RtlMoveMemory, et VirtualProtect:
 
-![Table d'imports](/docs/assets/images/maldev3_import1.png)
+![Table d'imports](docs/assets/images/maldev3_import1.png)
  
  Il existe un moyen somme toute basique d'appeller ces fonctions dans notre programme sans que celles-ci apparaissent dans la table d'import. Pour ce faire, nous allons avoir recours au tandem de fonctions GetProcAddress et GetModuleHandle. Voyons comment ces dernières sont définies dans la MSDN.
 
@@ -219,7 +219,7 @@ auto const pVirtProt = reinterpret_cast<BOOL(WINAPI*)(LPVOID,SIZE_T,DWORD,PDWORD
 
 Après compilation, il nous suffit une nouvelle fois d'ouvrir cet exécutable avec PEBear et d'accéder à la table de ses imports :
 
-![Tables d'imports post-obfuscation](/docs/assets/images/maldev3_import2.png)
+![Tables d'imports post-obfuscation](../docs/assets/images/maldev3_import2.png)
 
 En observant la listes des fonctions importées de kernel32.dll, on s'aperçoit que VirtualAlloc, RtlMoveMemory, et VirtualProtect n'y sont pas présentes : l'import de ces dernières n'est donc pas détectable statiquement.
 
