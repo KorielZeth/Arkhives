@@ -16,7 +16,7 @@ layout: default
 
 ## La programmation Système sous Windows
 
-[Introduction à la programmation système sous Windows (pas encore commencé)](./pages/winsysprog_1.md)
+[Introduction à la programmation système sous Windows (à venir)](./pages/winsysprog_1.md)
 
 ## Le développement de malwares sous Windows à des fins éducatives
 
@@ -24,7 +24,9 @@ layout: default
 
 [Le maldev sous Windows : exécution d'un simple payload](./pages/maldev_2.md)
 
-[Le maldev sous Windows : obfuscation basique d'un simple payload (en progrès)](./pages/maldev_3.md)
+[Le maldev sous Windows : chiffrement d'un payload et obfuscation d'appels de fonctions](./pages/maldev_3.md)
+
+[Le maldev sous Windows : backdoorer un exécutable](./pages/maldev_4.md)
 
 ## Journal de développement d'une PoC de Ransomware en C++
 

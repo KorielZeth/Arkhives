@@ -1,6 +1,6 @@
 # Les bases de l'obfuscation
 
-Nous avons créé ensemble dans le précédent post un exécutable utilisant l'API Windows pour exécuter un shellcode, super.
+Nous avons créé ensemble dans le précédent post un exécutable utilisant l'API Windows pour exécuter un shellcode, génial.
 
 Le petit souci, c'est que les fonctions importées apparaitront directement dans la table des imports (pour plus d'informations, se référer à la troisième entrée de ma série d'article sur le format de fichier PE). Et les produits antiviraux ne sont pas bêtes ; pour ce qui touche à l'analyse statique, un exécutable qui importe le quatuor de fonctions utilisées dans le précédent post et qui inclut son payload "tel quel" va faire s'illuminer n'importe quelle console de SOC comme un sapin de noël. Dans ce post, nous allons donc visualiser les concepts basiques qu'un acteur malicieux pourrait utiliser afin d'obfusquer les signes les plus évidents de la dangerosité de son programme.
 
@@ -154,9 +154,9 @@ int AESDecrypt(char * payload, unsigned int payload_len, char * key, size_t keyl
 }
 ```
 
-Les noms des fonctions sont somme toutes explicites : une handle est crée vers un contexte cryptographique, puis un hash SHA256 est généré et une Clé (objet Windows) est dérivée en se basant sur ledit hash et notre clé (la chaîne de caractère aléatoire générée lors de l'encryption de ce programme). Le payload est ensuite déchiffré en utilisant cette Clé, puis les différentes handles vers les objects créés par la fonction (contexte, hash,et Clé) sont ensuite supprimés.
+Les noms des fonctions sont somme toutes explicites : une handle est crée vers un contexte cryptographique, puis un hash SHA256 est généré et une Clé (un objet Windows spécifique utilisé employé dans le cadre de nos opérations cryptographiques) est dérivée en se basant sur ledit hash et sur notre clé (la chaîne de caractère aléatoire générée lors de l'encryption de ce programme). Le payload est ensuite déchiffré en utilisant cette Clé, puis les différentes handles vers les objects créés par la fonction (contexte, hash,et Clé) sont ensuite supprimés.
 
->Si vous êtes curieux concernant l'utilisation des fonctions cryptographiques de l'API Windows, vous pouvez aller jeter un oeil au deuxième post concernant mon journal de dévelopement d'une PoC de ransomware
+>Si vous êtes curieux concernant l'utilisation des fonctions cryptographiques de l'API Windows, vous pouvez aller jeter un oeil au deuxième post concernant mon journal de dévelopement d'une PoC de ransomware.
 
 ## L'obfuscation de nos appels de fonction
 
@@ -227,4 +227,4 @@ En observant la listes des fonctions importées de kernel32.dll, on s'aperçoit 
 >Notes : Windows Defender a l'air relativement partial à l'utilisation de certaines fonctions provenant de son API. J'ai récemment pu concevoir un programme chiffrant à des fins de démonstrations des fichiers de manière récursive (cf la série d'articles sur la PoC de ransomware) et se permettant même un changement de clé de registre et une connection à une IP considérée comme dangereuse, et Windows Defender n'en avait apparemment pas grand chose à faire. Bon.
 
 
-Nous avons donc dans cet article pu faire un tour basique des mécanismes de chiffrement de payloads et obfuscation d'appels à fonction. Le prochain article, quand à lui, portera sur l'évidage de binaires pré-existants afin d'y inclure des charges malicieuses. A la prochaine !
+Nous avons donc dans cet article pu faire un tour basique des mécanismes de chiffrement de payloads et obfuscation d'appels à fonction. Le prochain article, quand à lui, portera sur l'évidage de binaires pré-existants afin d'y inclure des charges malicieuses (ou comme nos amis anglophones le résument en un mot, la création de "backdoors"). A la prochaine !

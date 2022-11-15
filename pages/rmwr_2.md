@@ -278,4 +278,4 @@ Voilà donc à quoi ressemble le code final pour le chiffrement d'un fichier.
 
   A noter que je n'ai pas inclus certaines opérations lambda, comme par exemple de la manipulation de strings afin d'assurer que le fichier de destination aie l'extension ".kek" mentionnée dans la partie précédente.
 
-  Maintenant que les opérations de chiffrement basiques sont prêtes, il nous faut écrire un petit algorithme récursif qui se chargera d'itérer le système de fichier et d'exécuter la routine de chiffrement, à plusieurs degrés de profondeur si besoin est.
+  Maintenant que les opérations de chiffrement basiques sont prêtes, il nous faut écrire un petit algorithme récursif qui se chargera d'itérer le système de fichier et d'exécuter la routine de chiffrement, à plusieurs degrés de profondeur si besoin est : cela sera le sujet du prochain article. A la prochaine !
