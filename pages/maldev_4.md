@@ -23,8 +23,10 @@ Nous allons quand à nous nous concentrer sur la première méthode. En utilisan
 
 La première étape consiste donc, en utilisant le debugger de notre choix (32dbg pour cet article), à localiser un creux de taille suffisante pour notre payload. Il existe un moyen très simple pour accomplir cela : en nous rendant dans la section .text (qui pour rappel contient les instructions qui seront exécutées par notre programme), et en défilant vers le bas pendant suffisamment longtemps, nous arrivons à un point de ladite section où il n'y a plus d'instructions à exécuter, malgré le fait que la section ne soit pas encore finie. C'est dans ce "reste", aisèment identifiable car plein d'octets vides que nous placerons notre shellcode.
 
+![VLC creux](../docs/assets/images/maldev4_creux.png)
+![Section .text](../docs/assets/images/maldev4_textsection.png)
 
-[screenshot ici]
+
 
 ## Modifier la logique d'exécution du programme
 
@@ -32,4 +34,4 @@ La seconde étape, toujours dans notre debugger, consiste à placer notre payloa
 
 Pour commencer, après avoir placé un breakpoint au début de notre creux, afin de pouvoir plus facilement y retourner, nous nous rendons au point d'entrée de l'exécutable ("Entry point" en anglais), où commence l'exécution des instructions de ce dernier à chaque lancement de VLC :
 
-[gif ici]
+![VLC entry point](../docs/assets/images/maldev4_entrypoint.gif)
