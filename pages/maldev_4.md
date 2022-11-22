@@ -30,8 +30,14 @@ La première étape consiste donc, en utilisant le debugger de notre choix (32db
 
 ## Modifier la logique d'exécution du programme
 
-La seconde étape, toujours dans notre debugger, consiste à placer notre payload dans le creux, puis de modifier la logique d'exécution des instructions situées dans notre programme, afin que notre payload soit exécuté sans handicaper sa fonctionnalité initiale (dans notre cas, le démarrage et l'utilisation du logiciel vidéo VLC). Le principe est simple ; sauvegarder le contexte d'exécution (registres et flags) du programme, puis remplacer la première instruction du programme par un saut à l'adresse contenant notre payload, puis, après l'exécution dudit payload
+La seconde étape, toujours dans notre debugger, consiste à placer notre payload dans le creux, puis de modifier la logique d'exécution des instructions situées dans notre programme, afin que notre payload soit exécuté sans handicaper sa fonctionnalité initiale (dans notre cas, le démarrage et l'utilisation du logiciel vidéo VLC). Le principe est simple ; sauvegarder le contexte d'exécution (registres et flags) du programme, puis remplacer la première instruction du programme par un saut à l'adresse contenant notre payload, et enfin, après l'exécution dudit payload, retourner aux instructions originales assurant le fonctionnement normal du programme. 
 
 Pour commencer, après avoir placé un breakpoint au début de notre creux, afin de pouvoir plus facilement y retourner, nous nous rendons au point d'entrée de l'exécutable ("Entry point" en anglais), où commence l'exécution des instructions de ce dernier à chaque lancement de VLC :
 
 ![VLC entry point](../docs/assets/images/maldev4_entrypoint.gif)
+
+Ensuite, après avoir copié et mis de côté les premières instructions, nous remplacons la toute première par un saut vers l'adresse de notre creux, via l'instruction "jmp". Puis, une fois le saut effectué, juste avant l'exécution de notre payload, nous sauvegardons le contexte d'exécution originel de notre programme via les instructions "pushad" et "pushfd", servant respectivement à sauvegarder l'état des registres, et celui des flags, en les poussant sur la stack mémoire.
+
+![Copie + remplacement des premières instructions]()
+
+L'étape suivante consiste ensuite logiquement à coller notre payload dans notre creux, puis, une fois celui-ci exécuté, à restaurer le contexte originel précédemment sauvegardé avec pushad/pushfd. Pour ce faire, il nous suffit d'utiliser les instructions "popad" et "popfd", qui, vous l'aurez sans doute deviné, sous les pendants inverses de pushad/pushfd.
