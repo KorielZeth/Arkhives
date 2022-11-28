@@ -36,8 +36,22 @@ Pour commencer, après avoir placé un breakpoint au début de notre creux, afin
 
 ![VLC entry point](../docs/assets/images/maldev4_entrypoint.gif)
 
-Ensuite, après avoir copié et mis de côté les premières instructions, nous remplacons la toute première par un saut vers l'adresse de notre creux, via l'instruction "jmp". Puis, une fois le saut effectué, juste avant l'exécution de notre payload, nous sauvegardons le contexte d'exécution originel de notre programme via les instructions "pushad" et "pushfd", servant respectivement à sauvegarder l'état des registres, et celui des flags, en les poussant sur la stack mémoire.
+Ensuite, après avoir copié et mis de côté les premières instructions, nous remplacons la toute première instruction par un saut vers l'adresse de notre creux, via l'instruction "jmp". Puis, une fois le saut effectué, juste avant l'exécution de notre payload, nous sauvegardons le contexte d'exécution originel de notre programme via les instructions "pushad" et "pushfd", servant respectivement à sauvegarder l'état des registres, et celui des flags, en les poussant sur la stack mémoire, avant de coller notre payload dans notre creux, et à sauvegarder.
 
-![Copie + remplacement des premières instructions]()
+![Copie + remplacement des premières instructions + collage du shellcode]()
 
-L'étape suivante consiste ensuite logiquement à coller notre payload dans notre creux, puis, une fois celui-ci exécuté, à restaurer le contexte originel précédemment sauvegardé avec pushad/pushfd. Pour ce faire, il nous suffit d'utiliser les instructions "popad" et "popfd", qui, vous l'aurez sans doute deviné, sous les pendants inverses de pushad/pushfd.
+A ce stade là, si nous tentons de lancer l'exécutable, notre payload va s'exécuter, faire apparaître cette bonne vieille calculatrice ... et c'est tout. En effet, le payload que nous avons inséré, une fois calc.exe lancé, considère que son devoir est accompli et exécute donc un appel de sortie ("exit call" sonne mieux en anglais), mettant fin au programme. Pour avoir à la fois notre calculatrice ET l'exécution normale de VLC, il nous faut désormais implémenter trois choses  :
+
+-Supprimer cet appel de sortie de notre payload, afin que l'exécution continue après l'apparition de la calculatrice
+-Restaurer le contexte originel précédemment sauvegardé (registres et flags)
+-Utiliser les instructions précédemment copiées et mises de côté afin de pouvoir reprendre le flux d'exécution de notre programme (via un jump vers le call approprié) et permettre à VLC de se lancer
+
+Commencons par repérer l'appel de sortie. La procédure la plus simple est tout simplement de se rendre au début de notre shellcode, puis de poser des breakpoints sur chaque instruction "call" afin de voir laquelle occasione l'arrêt complet du programme.
+
+![Repérage de l'appel]
+
+Une fois l'appel repéré, nous avons le choix de le contourner (en utilisant un "jmp" dans notre cas) ou de le supprimer entièrement. 
+
+![Suppression ou contournement de l'appel]
+
+Une fois cet appel éliminé, nous pouvons désormais restaurer le contexte originel via les instructions "popad" et "popfd" qui, vous l'aurez deviné, font l'inverse du duo popad/popfd utilisé précédemment pour sauvegarder ledit contexte. Et une fois ledit contexte originel restauré, revenons aux instructions que nous avions sauvegardées au début de notre article. Nous allons, afin de pouvoir permettre l'exécution normale de VLC après l'exécution de notre payload, insérer les instructions "push" sauvegardées juste après le duo popad/popfd.
