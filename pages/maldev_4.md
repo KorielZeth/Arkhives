@@ -30,7 +30,11 @@ La première étape consiste donc, en utilisant le debugger de notre choix (32db
 
 ## Modifier la logique d'exécution du programme
 
-La seconde étape, toujours dans notre debugger, consiste à placer notre payload dans le creux, puis de modifier la logique d'exécution des instructions situées dans notre programme, afin que notre payload soit exécuté sans handicaper sa fonctionnalité initiale (dans notre cas, le démarrage et l'utilisation du logiciel vidéo VLC). Le principe est simple ; sauvegarder le contexte d'exécution (registres et flags) du programme, puis remplacer la première instruction du programme par un saut à l'adresse contenant notre payload, et enfin, après l'exécution dudit payload, retourner aux instructions originales assurant le fonctionnement normal du programme. 
+La seconde étape, toujours dans notre debugger, consiste à placer notre payload dans le creux, puis de modifier la logique d'exécution des instructions situées dans notre programme, afin que notre payload soit exécuté sans handicaper sa fonctionnalité initiale (dans notre cas, le démarrage et l'utilisation du logiciel vidéo VLC). Le principe est simple ; sauvegarder le contexte d'exécution (registres et flags) du programme, puis remplacer la première instruction du programme par un saut à l'adresse contenant notre payload, et enfin, après l'exécution dudit payload, retourner aux instructions originales assurant le fonctionnement normal du programme.
+
+Une image valant mille mots, veuillez trouvez ci dessous ce magnifique diagramme fait sous Paint par votre humble serviteur (le design graphique est ma passion depuis toujours)
+
+![Diagrame]
 
 Pour commencer, après avoir placé un breakpoint au début de notre creux, afin de pouvoir plus facilement y retourner, nous nous rendons au point d'entrée de l'exécutable ("Entry point" en anglais), où commence l'exécution des instructions de ce dernier à chaque lancement de VLC :
 
@@ -54,4 +58,4 @@ Une fois l'appel repéré, nous avons le choix de le contourner (en utilisant un
 
 ![Suppression ou contournement de l'appel]
 
-Une fois cet appel éliminé, nous pouvons désormais restaurer le contexte originel via les instructions "popad" et "popfd" qui, vous l'aurez deviné, font l'inverse du duo popad/popfd utilisé précédemment pour sauvegarder ledit contexte. Et une fois ledit contexte originel restauré, revenons aux instructions que nous avions sauvegardées au début de notre article. Nous allons, afin de pouvoir permettre l'exécution normale de VLC après l'exécution de notre payload, insérer les instructions "push" sauvegardées juste après le duo popad/popfd.
+Une fois cet appel éliminé, nous pouvons désormais restaurer le contexte originel via les instructions "popad" et "popfd" qui, vous l'aurez sand doute deviné, font l'inverse du duo popad/popfd utilisé précédemment pour sauvegarder ledit contexte. Et une fois cette tâche accomplie, revenons aux instructions que nous avions sauvegardées au début de notre article : nous allons, afin de pouvoir permettre l'exécution normale de VLC après l'exécution de notre payload, d'abord insérer les instructions "push" sauvegardées (juste après notre duo popad/popfd), puis insérer un "jump" nous permettant de revenir auprès de notre entrypoint, *après*.
