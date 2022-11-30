@@ -58,4 +58,11 @@ Une fois l'appel repéré, nous avons le choix de le contourner (en utilisant un
 
 ![Suppression ou contournement de l'appel]
 
-Une fois cet appel éliminé, nous pouvons désormais restaurer le contexte originel via les instructions "popad" et "popfd" qui, vous l'aurez sand doute deviné, font l'inverse du duo popad/popfd utilisé précédemment pour sauvegarder ledit contexte. Et une fois cette tâche accomplie, revenons aux instructions que nous avions sauvegardées au début de notre article : nous allons, afin de pouvoir permettre l'exécution normale de VLC après l'exécution de notre payload, d'abord insérer les instructions "push" sauvegardées (juste après notre duo popad/popfd), puis insérer un "jump" nous permettant de revenir auprès de notre entrypoint, *après*.
+Une fois cet appel éliminé, nous pouvons désormais restaurer le contexte originel via les instructions "popad" et "popfd" qui, vous l'aurez sand doute deviné, font l'inverse du duo popad/popfd utilisé précédemment pour sauvegarder ledit contexte. Et une fois cette tâche accomplie, revenons aux instructions que nous avions sauvegardées au début de notre article : nous allons, afin de pouvoir permettre l'exécution normale de VLC après l'exécution de notre payload, d'abord insérer les instructions "push" sauvegardées (juste après notre duo popad/popfd), puis insérer un "jump" nous permettant de revenir près de notre entrypoint, entre le jump vers notre payload et le premier vrai call de VLC.
+
+![collage des instructions]
+
+
+Il ne nous reste plus qu'à tester le résultat :
+
+
