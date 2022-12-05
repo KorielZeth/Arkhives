@@ -48,7 +48,7 @@ A ce stade là, si nous tentons de lancer l'exécutable, notre payload va s'exé
 
 -Supprimer cet appel de sortie de notre payload, afin que l'exécution continue après l'apparition de la calculatrice
 -Restaurer le contexte originel précédemment sauvegardé (registres et flags)
--Utiliser les instructions précédemment copiées et mises de côté afin de pouvoir reprendre le flux d'exécution de notre programme (via un jump vers le call approprié) et permettre à VLC de se lancer
+-Reprendre le flux d'exécution de notre programme (via un jump vers le call approprié) et permettre à VLC de se lancer
 
 Commencons par repérer l'appel de sortie. La procédure la plus simple est tout simplement de se rendre au début de notre shellcode, puis de poser des breakpoints sur chaque instruction "call" afin de voir laquelle occasione l'arrêt complet du programme.
 
