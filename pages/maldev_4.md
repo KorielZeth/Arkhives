@@ -22,8 +22,9 @@ Nous allons quand à nous nous concentrer sur la première méthode. En utilisan
 
 La première étape consiste donc, en utilisant le debugger de notre choix (32dbg pour cet article), à localiser un creux de taille suffisante pour notre payload. Il existe un moyen très simple pour accomplir cela : en nous rendant dans la section .text (qui pour rappel contient les instructions qui seront exécutées par notre programme), et en défilant vers le bas pendant suffisamment longtemps, nous arrivons à un point de ladite section où il n'y a plus d'instructions à exécuter, malgré le fait que la section ne soit pas encore finie. C'est dans ce "reste", aisèment identifiable car plein d'octets vides, que nous placerons notre shellcode.
 
-![Sumatra creux](../docs/assets/images/maldev4_creux.png)
 ![Section .text](../docs/assets/images/maldev4_textsection.png)
+![Sumatra creux](../docs/assets/images/maldev4_creux.png)
+
 
 
 
