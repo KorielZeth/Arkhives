@@ -33,3 +33,9 @@ layout: default
 [Introduction et avertissement préalable](./pages/rmwr_1.md)
 
 [Le service de chiffrement](./pages/rmwr_2.md)
+
+[Parcourir le système de fichier](./pages/rmwr_3.md)
+
+## Journal de déploiement d'une stack SIEM open source
+
+[Introduction](./pages/siem_1.md)
