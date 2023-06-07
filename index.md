@@ -22,9 +22,9 @@ layout: default
 
 ## La forensique sous Windows
 
-[Brève introduction](./pages/forwin1.md)
+[Brève introduction à la forensique numérique](./pages/forwin1.md)
 
-[Le registre Windows](./pages/forwin2.md)
+[Le registre Windows et son exploitation dans un contexte forensique](./pages/forwin2.md)
 
 ## Le développement de malwares sous Windows à des fins éducatives
 
