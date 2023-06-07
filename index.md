@@ -14,9 +14,17 @@ layout: default
 
 [Les sections du format de fichiers Portable Executable](./pages/pe_3.md)
 
-## La programmation Système sous Windows
+## La programmation système sous Windows
 
-[Introduction à la programmation système sous Windows (à venir)](./pages/winsysprog_1.md)
+[Introduction à la programmation système sous Windows](./pages/winsysprog_1.md)
+
+[Concepts basiques du systèmes d'exploitation Windows (à venir)](./pages/winsysprog_2.md)
+
+## La forensique sous Windows
+
+[Brève introduction](./pages/forwin1.md)
+
+[Le registre Windows](./pages/forwin2.md)
 
 ## Le développement de malwares sous Windows à des fins éducatives
 
@@ -27,6 +35,12 @@ layout: default
 [Le maldev sous Windows : chiffrement d'un payload et obfuscation d'appels de fonctions](./pages/maldev_3.md)
 
 [Le maldev sous Windows : backdoorer un exécutable](./pages/maldev_4.md)
+
+## Création et automatisation d'un stack SIEM custom
+
+[Présentation du projet](./pages/siem_1.md)
+
+[Terraform et Ansible](./pages/siem_x.md)
 
 ## Journal de développement d'une PoC de Ransomware en C++
 

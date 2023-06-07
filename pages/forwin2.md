@@ -6,9 +6,9 @@ Le composant principal autour duquel s'articulent une partie non négligeable de
 
 Les clés sont des conteneurs qui agissent comme des dossiers pour organiser les informations. Elles peuvent contenir d'autres clés ou des valeurs. Chaque clé est identifiée par un chemin d'accès unique dans la hiérarchie du registre.
 
-Les valeurs, quant à elles, sont des éléments de données stockés à l'intérieur des clés, et contiennent elles-mêmes des données. Ainsi, dans l'exemple ci-dessous, bidule est la clé, trucmuche est la valeur, et machin est la donnée
+Les valeurs, quant à elles, sont des éléments de données stockés à l'intérieur des clés, et contiennent elles-mêmes des données. Ainsi, dans l'exemple ci-dessous, `Ordinateur\HKEY_CURRENT_CONFIG\Software\Fonts` est la clé, `LogPixels` est la valeur, et 120 est la donnée (en hexadécimal dans notre cas)
 
-[placeholder screenshot de regedit]
+![screenshot de regedit](../docs/assets/images/forwin2_regedit_example)
 
 
 Elles sont utilisées pour stocker des configurations, des paramètres, des préférences ou d'autres types d'informations. Chaque valeur est associée à un nom et à un type de données spécifique, tels que des chaînes de caractères, des nombres, des booléens, etc. Ces clés et valeurs ne sont pas là pour faire joli, mais sont au centre de plusieurs des fonctionnalités de Windows étant "tangibles" même pour un utilisateur lambda. Par exemple : 
@@ -21,7 +21,7 @@ Elles sont utilisées pour stocker des configurations, des paramètres, des pré
  Il est bien entendu possible de lire, modifier, ou encore supprimer ces clés et valeurs manuellement via certains outils appropriés, le plus populaire étant l'éditeur de registre par défaut déjà inclus dans Windows, regedit. 
 
 
-## Les clés racines
+## Les clés racines 
 
 Il existe cinq clés "racines" utilisées par le registre Windows, et desquelles découlent toutes les autres :
 
@@ -51,4 +51,9 @@ Deux autres ruches sont en outre situées dans le répertoire de l'utilisateur a
 
 Et enfin, la dernière ruche nous concernant, AmCache, est située dans le dossier de compatibilité applicative (mes traductions sont décidément les meilleures) : `C:\Windows\AppCompat\Programs\Amcache.hve`
 
-## Les journaux de transaction
+##  Les journaux de transaction et les sauvegardes du registres
+
+Afin de garder une trace des changements apportés au registre, Windows met à disposition de l'utilisateur deux types de fichiers:
+
+*   Les sauvegardes, situées dans le dossier `C:\Windows\System32\Config\RegBack` sont des snapshots statiques des différentes ruches créées tout les dix jours, utiles si l'on suspecte que certaines clés aient été modifiées récemment
+*   Les journaux de transaction ("transaction logs" en anglais), stockés dans les mêmes répertoires que les ruches auxquels ils sont respectivement associés avec l'extension `.LOG`, sont utilisés pour garder une trace des différentes modifications effectuées sur le registre (création/modification/suppression de valeurs) 

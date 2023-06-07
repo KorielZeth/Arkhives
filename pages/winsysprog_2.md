@@ -1,8 +1,8 @@
 # Les rouages internes de Windows
 
-# Principes généraux
-
 ## Processus
+
+
 
 ## Threads
 
