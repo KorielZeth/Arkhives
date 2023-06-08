@@ -1,6 +1,10 @@
-# Initiation à Terraform et Ansible
+# Création de l'infrastructure de notre stack SIEM
 
-## Terraform
+## Initiation à Terraform et Ansible
+
+Je compte profiter de ce projet pour me familiariser avec diverses technologies d'orcherstration, histoire de faire d'une pierre deux coups. Voyons ensemble les deux technologies utilisées dans le cadre de ce projet : 
+
+### Terraform
 
 Terraform est un outil open source d'IaC (Infrastructure as Code) publié par HashiCorp. Le concept d'IaC est plutôt explicite : toute mon infrastructure est déclarée dans des fichiers de configuration (en .tf) plutôt que mise en place manuellement. Il suffit ensuite de lancer quelques commandes dans le dossier `terraform` de notre environnement Cloud (Azure, AWS, etc) pour que l'infrastructure en question s'initialise. Ci-dessous un exemple de syntaxe Terraform (utilisé pour créer une machine virtuelle) : 
 
@@ -40,7 +44,7 @@ resource "azurerm_windows_virtual_machine" "ForLab-vm-dc" {
 ```
 
 
-## Ansible
+### Ansible
 
 Ansible, de son côté, est une plateforme d'automatisation de déploiements/configuration/gestion via des fichiers de configurations appelées playbook (en .yml) décrivant étape par étape les différentes tâches devant être exécutées sur les clients ciblés. L'avantage d'Ansible est qu'il ne nécessite pas d'agent installé sur les périphériques du SI à installer, fonctionnant plutôt via SSH pour les clients Linux, et WinRM/LDAP/Kerberos pour les clients Windows. Ci-dessous un exemple de syntaxe Ansible, utilisé pour créer un domaine sur un DC précédemment créé : 
 
@@ -58,7 +62,7 @@ Ansible, de son côté, est une plateforme d'automatisation de déploiements/con
 ```
 
 
-## Notre cas de figure, rapidement résumé
+### Notre cas de figure, rapidement résumé
 
 En ce qui nous concerne, le github de notre projet `cloud_forensics` utilise ces deux technologies :
 

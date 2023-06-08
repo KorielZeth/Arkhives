@@ -40,7 +40,7 @@ layout: default
 
 [Présentation du projet](./pages/siem_1.md)
 
-[Terraform et Ansible](./pages/siem_x.md)
+[Création de l'infrastructure nécessaire](./pages/siem_x.md)
 
 ## Journal de développement d'une PoC de Ransomware en C++
 

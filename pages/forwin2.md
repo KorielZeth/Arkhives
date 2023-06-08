@@ -65,4 +65,14 @@ Afin de garder une trace des changements apportés au registre, Windows met à d
 *   Les journaux de transaction ("transaction logs" en anglais), stockés dans les mêmes répertoires que les ruches auxquels ils sont respectivement associés avec l'extension `.LOG`, sont utilisés pour garder une trace des différentes modifications effectuées sur le registre (création/modification/suppression de valeurs) 
 
 
-## Exploration du registre avec Registry Explorer
+## Explorer le registre Windows
+
+Une fois en possession de ruches (précédemment récupérées dans une hypothétique étape de collecte pour les besoins du scénario), il nous faut donc explorer celles-ci en utilisant des outils en général créés et maintenus par des tierces parties, regedit étant incapable d'importer des ruches et ne fonctionnant de toute manière qu'en temps réel.
+
+### Notre couteau suisse : Registry Explorer
+
+L'un des outils développés par George Zimmerman (un nom qui reviendra souvent dans le domaine de la forensique numérique), Registry Explorer, souvent abrévié "RegExplorer", permet d'intéragir avec le registre Windows directement :  les utilisateurs peuvent effectuer des recherches, exporter/importer des données, et ajouter ou supprimer des clés. Il offre la possibilité d'importer plusieurs ruches dans l'outil afin de les analyser simultanément, et d'incorporer les journaux de transaction auxdites ruches afin de visualiser des versions plus récentes et "fiable" de ces dernières si le besoin s'en fait sentir.
+
+[screenshot de regexplorer]
+
+### Informations relatives au système d'information
