@@ -88,7 +88,7 @@ L'examen du registre Windows, c'est un peu comme une course, au final. Ainsi les
 *   `SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\Interfaces` et `SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Signatures\Unmanaged`, listant respectivement la liste des interfaces
 réseau de la machine, et la liste des réseaux à laquelle celle-ci s'est déjà connectée (à noter qu'une version 'Managed' de la seconde clé existe aussi)
 *   `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Run`, `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\RunOnce`, `SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce`,`SOFTWARE\Microsoft\Windows\CurrentVersion\Run`, `SOFTWARE\Microsoft\Windows\CurrentVersion\policies\Explorer\Run` : beaucoup de clés pour pointer vers la même chose, à savoir les programmes s'exécutant au démarrage de l'ordinateur (un concept notamment beaucoup utilisé comme mécanisme de persistence virale)
-*   `HKEY_LOCAL_MACHINE\SAM`: cette clé, considérée comme critique, héberge la base de données SAM, qui contient les informations liés aux comptes utilisateurs s'étant déjà connectés sur cette machine . Noms d'utilisateurs, identifiants de sécurité (SID), hash de mots de passes, and appartenance à des groupes ...
+*   `HKEY_LOCAL_MACHINE\SAM`: cette clé, considérée comme critique, héberge la base de données SAM, qui contient les informations liés aux comptes utilisateurs s'étant déjà connectés sur cette machine . Noms d'utilisateurs, identifiants de sécurité (SID), hash de mots de passes, and appartenance à des groupes (voir l'exemple ci-dessous).
 
 
 ![screenshot de la ruche SAM](../docs/assets/images/forwin2_samhive.png)
@@ -100,7 +100,7 @@ Ensuite, savoir quels fichiers et dossiers notre utilisateur a intéragi avec es
 
 *   `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs\[format]` : organisées par format de fichier (.pdf, .png, .doc ), celles-ci listent les derniers fichiers avec lesquels l'utilisateur a intéragi.
 *   `NTUSER.DAT\Software\Microsoft\Office\[numéro]` : contient la liste des fichiers récemment ouverts via Microsoft Office. Le placeholder "numéro" correspondant au numéro de version Office (par exemple `16.0` dans le cas de la version de 2019)
-*   `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32` et ses deux sous-clés `OpenSavePIDlMRU` et `LastVisitedPidlMRU` correspondent aux boîtes de dialogue que utilisées pour nous demander à quel emplacement nous souhaitons sauvegarder nos fichiers, emplacement que Windows garde ensuite en mémoire.
+*   `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32` et ses deux sous-clés `OpenSavePIDlMRU` et `LastVisitedPidlMRU` correspondent aux boîtes de dialogue que utilisées pour nous demander à quel emplacement nous souhaitons sauvegarder nos fichiers, emplacement que Windows garde ensuite en mémoire (voir l'exemple ci-dessous).
 *   `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths` et `NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery`correspondent aux recherches faites par l'utilisateur dans la barre de recherche de l'explorateur de fichier Windows
 
 ![screenshot de ComDlg32](../docs/assets/images/forwin2_lastopened.png)
@@ -112,7 +112,7 @@ Les clés suivantes sont utilisées afin que l'enquêteur forensique puisse savo
 
 *   `NTUSER.DAT\Software\Microsoft\Windows\Currentversion\Explorer\UserAssist\[GUID]\Count` liste les programmes ayant été lancés sur la machine ainsi que leur nombre d'exécutions. A noter que le `GUID` correspond à une liste fixe de GUIDs maintenue par Microsoft (et pas si bien documentée, d'ailleurs). Ainsi, `{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}` correspond très probablement à l'exécution d'applications et programmes, alors que `{F4E57C4B-2036-45F0-A9AB-443BCFE33D9F}` se charge de l'exécution de raccourcis.
 *   `Amcache.hve\Root\File\[GUID du volume]` nous fournit quand à elle des informations plus détaillées sur les programmes récemment exécutés : chemin d'installation, horodatage de l'installation et/ou de l'exécution, et même les hash SHA1 (une sous-clé par programme)
-*   `SYSTEM\CurrentControlSet\Services\bam\UserSettings\[SID]` et `SYSTEM\CurrentControlSet\Services\dam\UserSettings\[SID]`, où [SID] correspond au SID de l'utilisateur concerné, remplissent sensiblement le même rôle que la clé précédente. Un exemple est visible ci-dessous
+*   `SYSTEM\CurrentControlSet\Services\bam\UserSettings\[SID]` et `SYSTEM\CurrentControlSet\Services\dam\UserSettings\[SID]`, où [SID] correspond au SID de l'utilisateur concerné, remplissent sensiblement le même rôle que la clé précédente (voir l'exemple ci-dessous).
 
 ![screenshot de la clé bam](../docs/assets/images/forwin2_lastopened.png)
 
@@ -120,13 +120,13 @@ Les clés suivantes sont utilisées afin que l'enquêteur forensique puisse savo
 
 Comme vous pouvez le voir, je ne fais pas de cardio habituellement et ma tentative d'analogie sur la course à pied commence à s'essoufler, mais bon. Une fois que nous avons récoltés les informations clés des précédentes étapes, il est pertinent de se tourner vers les périphériques extérieurs ayant été connectés à ladite machine (clés USB ou disques additionels).
 
-*   `SYSTEM\CurrentControlSet\Enum\USBSTOR` et `SYSTEM\CurrentControlSet\Enum\USB` : nommées assez explicitement, ces clés stockent les informations liés aux périphériques USB ayant été branchés au système au moins une fois
+*   `SYSTEM\CurrentControlSet\Enum\USBSTOR` et `SYSTEM\CurrentControlSet\Enum\USB` : nommées assez explicitement, ces clés stockent les informations liés aux périphériques USB ayant été branchés au système au moins une fois (voir l'exemple ci-dessous).
 *   `SOFTWARE\Microsoft\Windows Portable Devices\Devices` qui contient le GUID et le "friendly name" des périphériques USB mentionnés plus haut
 
 
-
+![screenshot de usbstor](../docs/assets/images/forwin2_usb)
 
 ## Conclusion
 
 
-Pour conclure, l'analyse du registre Windows est aspects essentiels du processus forensique sous Windows, et savoir lesquelles de ces clés sont les plus pertinentes est un atout pour tout analyse forensique. En attendant, votre humble serviteur a préparé un petit antisèche, disponible [en cliquant ici](https://cheatography.com/outis/cheat-sheets/forensique-windows/), et vous donne rendez-vous au prochain article (quand je saurais quoi ajouter) !
+Pour conclure, l'analyse du registre Windows est un aspect essentiels du processus forensique sous Windows, et savoir lesquelles de ces clés sont les plus pertinentes est un atout pour tout analyse forensique. En attendant, votre humble serviteur a préparé une petite antisèche, disponible [en cliquant ici](https://cheatography.com/outis/cheat-sheets/forensique-windows/), et vous donne rendez-vous au prochain article (quand je saurais quoi ajouter) !
