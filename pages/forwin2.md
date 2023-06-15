@@ -15,9 +15,9 @@ Les valeurs, quant à elles, sont des éléments stockés à l'intérieur des cl
 
 Comme mentionné précédemment, ces clés/valeurs sont utilisées pour stocker des configurations, des paramètres, des préférences ou d'autres types d'informations. Chaque valeur est associée à un nom (comme `LogPixels` ci dessus, et au type de données qu'elle utilise, comme des chaînes de caractères, des nombres, des booléens, etc. Ces clés et valeurs ne sont pas là pour faire joli, mais sont au centre de plusieurs fonctionnalités "tangibles" de Windows, impactant l'expérience d'utilisateurs même lambdas. Par exemple : 
 
-*	La clé HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run et ses valeurs servent à identifier quels programmes doivent se lancer au démarrage du système d'exploitation.
-*	La clé HKEY_CURRENT_USER\Control Panel\Desktop et sa valeur "Wallpaper" pointe vers le chemin de l'image servant de fond d'écran utilisé sur le bureau de l'utilisateur connecté (et est donc utilisé par tous les programmes impactant le fond d'écran)
-*	La clé HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced et sa valeur "HideFileExt" sert à déterminer si les extensions des fichiers de l'utilisateur seront affichées quand ce dernier utilisera l'explorateur de fichier par défaut de Windows
+*	La clé `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run` et ses valeurs servent à identifier quels programmes doivent se lancer au démarrage du système d'exploitation.
+*	La clé `HKEY_CURRENT_USER\Control Panel\Desktop` et sa valeur `Wallpaper` pointe vers le chemin de l'image servant de fond d'écran utilisé sur le bureau de l'utilisateur connecté (et est donc utilisé par tous les programmes impactant le fond d'écran)
+*	La clé `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced` et sa valeur `HideFileExt` sert à déterminer si les extensions des fichiers de l'utilisateur seront affichées quand ce dernier utilisera l'explorateur de fichier par défaut de Windows
 
 
  Il est bien entendu possible de lire, modifier, ou encore supprimer ces clés et valeurs manuellement via certains outils appropriés, le plus populaire étant l'éditeur de registre par défaut déjà inclus dans Windows, regedit. Pour y accéder, rien de plus simple : touche windows + r, puis entrez "regedit" et appuyez sur entrée.
@@ -28,11 +28,11 @@ Comme mentionné précédemment, ces clés/valeurs sont utilisées pour stocker 
 Il existe cinq clés "racines" utilisées par le registre Windows et qui contiennent toutes les autres sous-clés. Elles servent à représenter la structure logique des clés de registre sous Windows  :
 
 
-*	HKEY_LOCAL_MACHINE (abrégée HKLM) contient les informations relatives à la configuration de l'ordinateur (pour tous les utilisateurs) 
-*	HKEY_CLASSES_ROOT (abrégée HKCR) est une sous-clé de `HKEY_LOCAL_MACHINE\Software` . Elle permet de définir quel programme doit être utilisé pour ouvrir un type de fichier spécifique.
-*	HKEY_CURRENT_USER (abrégée HKCU) contient les préférences et paramètres relatifs à l'utilisateur actuellement connecté.
-*	HKEY_USERS (abrégée HKU) contient les profils de tous les utilisateurs s'étant connectés à l'ordinateur, avec un sous-dossier dédié pour chaque utilisateur
-*	HKEY_CURRENT_CONFIG (abrégée HKCC) contient les informations de configuration matérielle de l'ordinateur au démarrage
+*	`HKEY_LOCAL_MACHINE` (abrégée HKLM) contient les informations relatives à la configuration de l'ordinateur (pour tous les utilisateurs) 
+*	`HKEY_CLASSES_ROOT` (abrégée HKCR) est une sous-clé de `HKEY_LOCAL_MACHINE\Software` . Elle permet de définir quel programme doit être utilisé pour ouvrir un type de fichier spécifique.
+*	`HKEY_CURRENT_USER` (abrégée HKCU) contient les préférences et paramètres relatifs à l'utilisateur actuellement connecté.
+*	`HKEY_USERS` (abrégée HKU) contient les profils de tous les utilisateurs s'étant connectés à l'ordinateur, avec un sous-dossier dédié pour chaque utilisateur
+*	`HKEY_CURRENT_CONFIG` (abrégée HKCC) contient les informations de configuration matérielle de l'ordinateur au démarrage
 
 ### Les ruches
 
@@ -44,18 +44,18 @@ La majorité de ces ruches sont situées dans le répertoire `C:\Windows\system3
 ![screenshot des ruches](../docs/assets/images/forwin2_hives.png)
 
 
-*	DEFAULT, liée à HKEY_USERS\DEFAULT 
-*	SAM, liée à HKEY_LOCAL_MACHINE\SAM
-*	SECURITY, liée à HKEY_LOCAL_MACHINE\Security
-*	SOFTWARE, liée à HKEY_LOCAL_MACHINE\Software
-*	SYSTEM, liée à HKEY_LOCAL_MACHINE\System
+*	`DEFAULT`, liée à HKEY_USERS\DEFAULT 
+*	`SAM`, liée à HKEY_LOCAL_MACHINE\SAM
+*	`SECURITY`, liée à HKEY_LOCAL_MACHINE\Security
+*	`SOFTWARE`, liée à HKEY_LOCAL_MACHINE\Software
+*	`SYSTEM`, liée à HKEY_LOCAL_MACHINE\System
 
 Deux autres ruches sont en outre situées dans le répertoire de l'utilisateur actuel (donc `C:\Users\[utilisateur]`) :
 
-*	NTDUSER.DAT, liée à HKEY_CURRENT_USER
-*	USRCLASS.DAT, liée à HKEY_CURRENT_USER\Software\Classes
+*	`NTDUSER.DAT`, liée à HKEY_CURRENT_USER
+*	`USRCLASS.DAT`, liée à HKEY_CURRENT_USER\Software\Classes
 
-Et enfin, la dernière ruche nous concernant, AmCache, est située dans le dossier de compatibilité applicative (mes traductions sont décidément les meilleures) : `C:\Windows\AppCompat\Programs\Amcache.hve`
+Et enfin, la dernière ruche nous concernant, `AmCache`, est située dans le dossier de compatibilité applicative (mes traductions sont décidément les meilleures) : `C:\Windows\AppCompat\Programs\Amcache.hve`
 
 ###  Les journaux de transaction et les sauvegardes du registres
 
@@ -129,4 +129,4 @@ Comme vous pouvez le voir, je ne fais pas de cardio habituellement et ma tentati
 ## Conclusion
 
 
-Pour conclure, l'analyse du registre Windows est aspects essentiels du processus forensique sous Windows, et savoir lesquelles de ces clés sont les plus pertinentes est un atout pour tout analyse forensique. En attendant, votre humble serviteur a préparé un petit antisèche, disponible [ici](https://cheatography.com/outis/cheat-sheets/forensique-windows/), et vous donne rendez-vous au prochain article (quand je saurais quoi ajouter) !
+Pour conclure, l'analyse du registre Windows est aspects essentiels du processus forensique sous Windows, et savoir lesquelles de ces clés sont les plus pertinentes est un atout pour tout analyse forensique. En attendant, votre humble serviteur a préparé un petit antisèche, disponible [en cliquant ici](https://cheatography.com/outis/cheat-sheets/forensique-windows/), et vous donne rendez-vous au prochain article (quand je saurais quoi ajouter) !
