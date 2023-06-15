@@ -114,7 +114,7 @@ Les clés suivantes sont utilisées afin que l'enquêteur forensique puisse savo
 *   `Amcache.hve\Root\File\[GUID du volume]` nous fournit quant à elle des informations plus détaillées sur les programmes récemment exécutés : chemin d'installation, horodatage de l'installation et/ou de l'exécution, et même les hash SHA1 (une sous-clé par programme).
 *   `SYSTEM\CurrentControlSet\Services\bam\UserSettings\[SID]` et `SYSTEM\CurrentControlSet\Services\dam\UserSettings\[SID]`, où [SID] correspond au SID de l'utilisateur concerné, remplissent sensiblement le même rôle que la clé précédente (voir l'exemple ci-dessous).
 
-![screenshot de la clé bam](../docs/assets/images/forwin2_lastopened.png)
+![screenshot de la clé bam](../docs/assets/images/forwin2_bam.png)
 
 ### Vitesse de croisière : récupération d'informations liés au périphériques tiers
 
