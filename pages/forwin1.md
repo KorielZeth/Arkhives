@@ -24,4 +24,4 @@ Comme la plupart des domaines liés à la cybersécurité, la forensique informa
 
 Dans le cadre des articles suivants, je me concentrerai donc sur des environnements Windows. L'analyse forensique sur ces derniers implique (entre autres) l'examen des données stockées sur des disques durs, des clés USB, des registres système, des journaux d'événements, des fichiers de configuration, etc. Ces informations servent à réveler des détails précieux sur (entre autres, toujours) les activités des utilisateurs, les programmes exécutés, les connexions réseau, les modifications de configuration, ou encore des violations de sécurité et d'autres événements pertinents.
 
-Les premiers articles, dont le prochain serviront à introduir certains concepts clés utilisés dans la forensique Windows, comme le registre Windows et ses clés/valeurs. Pour y accéder, [je vous laisse cliquer ici](./pages/forwin2.md) !
+Les premiers articles, dont le prochain serviront à introduir certains concepts clés utilisés dans la forensique Windows, comme le registre Windows et ses clés/valeurs. Pour y accéder, [je vous laisse cliquer ici](./forwin2.md) !
